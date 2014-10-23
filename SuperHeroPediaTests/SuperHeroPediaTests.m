@@ -8,8 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
+#import "SuperHero.h" //step 1
 
 @interface SuperHeroPediaTests : XCTestCase
+@property SuperHero *hero1; //1
+@property SuperHero *hero2; //1
 
 @end
 
@@ -17,12 +20,49 @@
 
 - (void)setUp {
     [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
+
+    NSDictionary *dictionary1 = @{@"name":@"Kevin", @"description":@"really nice guy"};
+    NSDictionary *dictionary2 = @{@"name":@"Dave", @"description":@"also a nice guy"};
+
+    self.hero1 = [[SuperHero alloc] initWithDictionary:dictionary1];
+    self.hero2 = [[SuperHero alloc] initWithDictionary:dictionary2];
 }
 
 - (void)tearDown {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
+}
+
+-(void)testAllyCountStartAtZero //2
+{
+    XCTAssert(self.hero1.allies.count == 0);
+}
+
+-(void)testAddingAllyWorks //2
+{
+    [self.hero1 addAlly:self.hero2];
+    XCTAssertEqual(self.hero1, self.hero2.allies.firstObject);
+    XCTAssertEqual(self.hero2, self.hero1.allies.firstObject);
+}
+
+-(void)testAllyStartsNotNil //2
+{
+    XCTAssert(self.hero1.allies != nil);
+}
+
+-(void)testSuperheroRetrievable //3
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"retrieving superheros"];
+    [SuperHero retrieveSuperHerosWithCompletion:^(NSArray *superHeros) {
+        XCTAssertEqual(25, superHeros.count);
+        [expectation fulfill];
+    }];
+    [self waitForExpectationsWithTimeout:10.0 handler:nil];
+}
+
+-(void)testAllyStartsNoNil //1 - created
+{
+    XCTAssert(self.hero1.allies != nil);
 }
 
 - (void)testExample {
